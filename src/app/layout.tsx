@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
+import { RouteGuard } from "@/components/RouteGuard";
+import { BottomNav } from "@/components/BottomNav";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,6 +15,14 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const viewport = {
+  themeColor: "#030712",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevents zooming on inputs
+};
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,11 +35,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-950 text-gray-100`}
       >
-        {children}
+        <AuthProvider>
+          <RouteGuard>
+            {children}
+            <div className="pb-safe">
+              <BottomNav />
+            </div>
+            <Toaster position="top-center" theme="dark" />
+          </RouteGuard>
+        </AuthProvider>
       </body>
     </html>
   );
